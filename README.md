@@ -1,1 +1,1 @@
-# COS782---A2-Generic-Observer-
+# COS782 - Assignment 2: Generic Observer*
