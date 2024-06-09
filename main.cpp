@@ -1,46 +1,80 @@
 #include <iostream>
-#include <memory>
+#include <concepts>
 #include <type_traits>
 
-// In the library
-template<typename Derived>
-class IceCream {
+// Define a concept that checks that the type has toppingCost associated
+template<typename T>
+concept IsIceCreamDecorator = requires(T a) {
+    { a.toppingCost() } -> std::same_as<double>;
+};
+
+// Base case for the recursive calculation of total cost
+template<typename... Toppings>
+class IceCream;
+
+template<>
+class IceCream<> {
 public:
-    double cost() const {
-        return static_cast<const Derived*>(this)->costImpl();
+    double getCost() const {
+        return 0.0;
     }
 };
 
-template<typename Decorated>
-class Decorator : public Decorated {
+// Recursive case for calculating the total cost
+template<typename T, typename... Toppings>
+class IceCream<T, Toppings...> {
+    static_assert(IsIceCreamDecorator<T>, "Type does not satisfy IsIceCreamDecorator concept.");
 public:
-    double cost() const {
-        return Decorated::cost() + this->extraCostImpl();
-    }
-    double extraCostImpl() const {
-        return 0; // Default implementation
+
+    static double constexpr baseCost = 1.0;
+    double getCost() const {
+        return baseCost + T().toppingCost() + IceCream<Toppings...>().getCost();
     }
 };
 
-
-// In the ice cream program
-class Vanilla : public IceCream<Vanilla> {
+class ChocolateSauce {
 public:
-    double costImpl() const {
-        return 1.0;
+    double toppingCost() const {
+        return 0.5;
     }
 };
 
-template<typename Decorated>
-class ChocolateChips : public Decorator<Decorated> {
+class Sprinkles {
 public:
-    double extraCostImpl() const {
-        return 0.2;
+    double toppingCost() const {
+        return 0.3;
     }
+};
+
+class InvalidTopping {
+public:
+    // Missing toppingCost() function
 };
 
 int main() {
-    ChocolateChips<Vanilla> deliciousIceCream;
-    std::cout << "Total cost: $" << deliciousIceCream.cost() << std::endl;
+    IceCream<ChocolateSauce, Sprinkles> chocolateSauce;
+    // IceCream<ChocolateSauce, Sprinkles, InvalidTopping> chocolateSauce; // Will not compile
+    std::cout << chocolateSauce.getCost() << std::endl;
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
