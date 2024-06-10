@@ -1,9 +1,7 @@
 #include <iostream>
-#include <concepts>
-#include <type_traits>
+#include "milky_lane.h"
 
-#include "library.h"
-
+// ====== Custom Decorators made by client =======
 class WhippedCream {
 public:
     double toppingCost() const {
@@ -15,15 +13,10 @@ public:
     }
 };
 
-class InvalidTopping {
-public:
-    // Missing toppingCost() function
-};
-
+// ====== Client Runtime using the Ice Cream Decorator Library =======
 int main() {
     IceCream<ChocolateSauce, Sprinkles, Oreo> chocoNsprinkles;
-    IceCream<ChocolateSauce> choco;
-    // IceCream<ChocolateSauce, Sprinkles, InvalidTopping> chocolateSauce; // Will not compile
+    IceCream<WhippedCream> choco;
 
     std::cout << chocoNsprinkles.getDescription() << std::endl;
     std::cout << chocoNsprinkles.getCost() << std::endl << std::endl;;

@@ -8,4 +8,3 @@ template <typename T> \
 concept name = requires(T a) { \
     __VA_ARGS__ \
 };
-
