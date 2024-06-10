@@ -2,47 +2,16 @@
 #include <concepts>
 #include <type_traits>
 
-// Define a concept that checks that the type has toppingCost associated
-template<typename T>
-concept IsIceCreamDecorator = requires(T a) {
-    { a.toppingCost() } -> std::same_as<double>;
-};
+#include "library.h"
 
-// Base case for the recursive calculation of total cost
-template<typename... Toppings>
-class IceCream;
-
-template<>
-class IceCream<> {
-public:
-    double getCost() const {
-        return 0.0;
-    }
-};
-
-// Recursive case for calculating the total cost
-template<typename T, typename... Toppings>
-class IceCream<T, Toppings...> {
-    static_assert(IsIceCreamDecorator<T>, "Type does not satisfy IsIceCreamDecorator concept.");
-public:
-
-    static double constexpr baseCost = 1.0;
-    double getCost() const {
-        return baseCost + T().toppingCost() + IceCream<Toppings...>().getCost();
-    }
-};
-
-class ChocolateSauce {
+class WhippedCream {
 public:
     double toppingCost() const {
-        return 0.5;
+        return 0.75;
     }
-};
 
-class Sprinkles {
-public:
-    double toppingCost() const {
-        return 0.3;
+    std::string getDescription() {
+        return "Whipped Cream";
     }
 };
 
@@ -52,29 +21,16 @@ public:
 };
 
 int main() {
-    IceCream<ChocolateSauce, Sprinkles> chocolateSauce;
+    IceCream<ChocolateSauce, Sprinkles, Oreo> chocoNsprinkles;
+    IceCream<ChocolateSauce> choco;
     // IceCream<ChocolateSauce, Sprinkles, InvalidTopping> chocolateSauce; // Will not compile
-    std::cout << chocolateSauce.getCost() << std::endl;
+
+    std::cout << chocoNsprinkles.getDescription() << std::endl;
+    std::cout << chocoNsprinkles.getCost() << std::endl << std::endl;;
+
+    std::cout << choco.getDescription() << std::endl;
+    std::cout << choco.getCost() << std::endl;
+
+
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
